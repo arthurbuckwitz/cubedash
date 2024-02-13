@@ -2,8 +2,9 @@ namespace SpriteKind {
     export const coin = SpriteKind.create()
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile1`, function (sprite, location) {
-    info.changeLifeBy(-1)
-    startlevel()
+    if (bob.tileKindAt(TileDirection.Center, assets.tile`myTile1`)) {
+        die()
+    }
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (bob.vy == 0) {
@@ -11,7 +12,27 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         music.play(music.melodyPlayable(music.knock), music.PlaybackMode.UntilDone)
     }
 })
+function die () {
+    if (has_died == 0) {
+        info.changeLifeBy(-1)
+        has_died = 1
+        startlevel()
+        music.play(music.melodyPlayable(music.powerDown), music.PlaybackMode.UntilDone)
+    }
+}
 function startlevel () {
+    tiles.placeOnRandomTile(bob, assets.tile`myTile7`)
+    has_died = 0
+}
+info.onLifeZero(function () {
+    game.gameOver(false)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.coin, function (sprite2, otherSprite) {
+    info.changeScoreBy(1)
+    sprites.destroy(otherSprite)
+    music.play(music.melodyPlayable(music.magicWand), music.PlaybackMode.UntilDone)
+})
+function setuplevel () {
     if (current_level == 0) {
         tiles.setCurrentTilemap(tilemap`level1`)
     } else if (current_level == 1) {
@@ -221,23 +242,14 @@ function startlevel () {
         tiles.placeOnTile(coin2, value)
         tiles.setTileAt(value, assets.tile`transparency16`)
     }
-    tiles.placeOnRandomTile(bob, assets.tile`myTile7`)
-    bob.ay = 350
-    scene.cameraFollowSprite(bob)
 }
-info.onLifeZero(function () {
-    game.gameOver(false)
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.coin, function (sprite2, otherSprite) {
-    info.changeScoreBy(1)
-    sprites.destroy(otherSprite)
-    music.play(music.melodyPlayable(music.magicWand), music.PlaybackMode.UntilDone)
-})
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile2`, function (sprite3, location2) {
     current_level += 1
+    setuplevel()
     startlevel()
 })
 let coin2: Sprite = null
+let has_died = 0
 let bob: Sprite = null
 let current_level = 0
 scene.setBackgroundColor(9)
@@ -366,5 +378,9 @@ scene.setBackgroundImage(img`
 current_level = 0
 bob = sprites.create(assets.image`design1`, SpriteKind.Player)
 controller.moveSprite(bob, 100, 0)
-info.setLife(3)
+info.setLife(5)
+setuplevel()
 startlevel()
+bob.ay = 350
+scene.cameraFollowSprite(bob)
+has_died = 0
