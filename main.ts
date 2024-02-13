@@ -2,7 +2,8 @@ namespace SpriteKind {
     export const coin = SpriteKind.create()
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile1`, function (sprite, location) {
-    game.gameOver(false)
+    info.changeLifeBy(-1)
+    startlevel()
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (bob.vy == 0) {
@@ -224,6 +225,9 @@ function startlevel () {
     bob.ay = 350
     scene.cameraFollowSprite(bob)
 }
+info.onLifeZero(function () {
+    game.gameOver(false)
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.coin, function (sprite2, otherSprite) {
     info.changeScoreBy(1)
     sprites.destroy(otherSprite)
@@ -362,5 +366,5 @@ scene.setBackgroundImage(img`
 current_level = 0
 bob = sprites.create(assets.image`design1`, SpriteKind.Player)
 controller.moveSprite(bob, 100, 0)
-let lives = 3
+info.setLife(3)
 startlevel()
