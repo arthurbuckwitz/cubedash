@@ -33,6 +33,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.coin, function (sprite2, otherSp
     music.play(music.melodyPlayable(music.magicWand), music.PlaybackMode.UntilDone)
 })
 function setuplevel () {
+    sprites.destroyAllSpritesOfKind(SpriteKind.coin)
     if (current_level == 0) {
         tiles.setCurrentTilemap(tilemap`level1`)
     } else if (current_level == 1) {
