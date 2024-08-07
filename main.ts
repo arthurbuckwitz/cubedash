@@ -1,10 +1,16 @@
 namespace SpriteKind {
     export const coin = SpriteKind.create()
+    export const x = SpriteKind.create()
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile1`, function (sprite, location) {
     if (bob.tileKindAt(TileDirection.Center, assets.tile`myTile1`)) {
         die()
     }
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.x, function (sprite2, otherSprite) {
+    info.changeScoreBy(-5)
+    sprites.destroy(otherSprite)
+    music.play(music.melodyPlayable(music.wawawawaa), music.PlaybackMode.UntilDone)
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (bob.vy == 0) {
@@ -33,6 +39,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.coin, function (sprite2, otherSp
     music.play(music.melodyPlayable(music.magicWand), music.PlaybackMode.UntilDone)
 })
 function setuplevel () {
+    let current_level2 = 0
     sprites.destroyAllSpritesOfKind(SpriteKind.coin)
     if (current_level == 0) {
         tiles.setCurrentTilemap(tilemap`level1`)
@@ -42,6 +49,8 @@ function setuplevel () {
         tiles.setCurrentTilemap(tilemap`level7`)
     } else if (current_level == 3) {
         tiles.setCurrentTilemap(tilemap`level8`)
+    } else if (current_level2 == 4) {
+        tiles.setCurrentTilemap(tilemap`level11`)
     } else {
         game.gameOver(true)
     }
@@ -376,7 +385,7 @@ scene.setBackgroundImage(img`
     8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888889999999999999999999999966666666666666688888888
     8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
     `)
-current_level = 0
+current_level = 3
 bob = sprites.create(assets.image`design1`, SpriteKind.Player)
 controller.moveSprite(bob, 100, 0)
 info.setLife(5)
